@@ -47,7 +47,10 @@ typedef struct {
 		bool BMS : 1;
 		bool IMD : 1;
 		bool BSPD : 1;
-		bool reserved : 5;
+		bool BMS_Latch : 1;
+		bool IMD_Latch : 1;
+		bool BSPD_Latch : 1;
+		bool reserved : 2;
 		} LED;
 		uint8_t led_flags;
 	} LF;

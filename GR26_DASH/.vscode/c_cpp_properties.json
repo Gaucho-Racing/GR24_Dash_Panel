@@ -1,0 +1,62 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/include",
+                "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/src",
+                "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/.pio/libdeps/sparkfun_promicro16/FastLED/src",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/variants/sparkfun_promicro",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/include",
+                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/src",
+                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/.pio/libdeps/sparkfun_promicro16/FastLED/src",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/variants/sparkfun_promicro",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=60119",
+                "ARDUINO_AVR_PROMICRO16",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "USB_VID=0x1B4F",
+                "USB_PID=0x9206",
+                "USB_PRODUCT=\"SparkFun Pro Micro\"",
+                "USB_MANUFACTURER=\"SparkFun\"",
+                "__AVR_ATmega32U4__",
+                ""
+            ],
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11",
+            "compilerPath": "C:/Users/ryand/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerArgs": [
+                "-mmcu=atmega32u4",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}
