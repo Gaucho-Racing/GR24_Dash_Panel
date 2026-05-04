@@ -54,10 +54,14 @@ CRGB error_leds[NUM_ERROR_LED];
 int randNumber1;
 int randNumber2;
 
+CRGB nvidia_green = CRGB(5, 100, 2);
 
 bool rainbow = false;
 bool flash = false;
+bool flash2 = false;
 bool reset_car_pls = false;
+bool precharge = false;
+bool discharge = false;
 
 
 
@@ -80,14 +84,12 @@ void sendData(bool TS_Active, bool RTD, bool TS_Off, bool RTD_Off, bool IMD = IM
 void setButtonLED(CRGB color1, CRGB color2) {
   btn_leds[0] = color1;
   btn_leds[1] = color2;
-  FastLED.show();
 }
 
 void updateErrorLEDs() {
   error_leds[0] = BSPD_State ? CRGB::Red : CRGB::Black;
   error_leds[1] = IMD_State ? CRGB::Red : CRGB::Black;
   error_leds[2] = BMS_State ? CRGB::Red : CRGB::Black;
-  FastLED.show();
 }
 
 void startupTest() {
@@ -166,11 +168,11 @@ void setup() {
   }
   CAN0.init_Mask(0, 1, 0x1FFFFFFF);              // first mask
   CAN0.init_Filt(0, 1, 0x00200300);              // Accept 0x200300.
-  CAN0.init_Filt(1, 1, 0x00200300);              // Accept 0x200300.
+  CAN0.init_Filt(1, 1, 0x00300300);              // Accept 0x200300.
   CAN0.init_Mask(1, 1, 0x1FFFFFFF);              // second mask
   CAN0.init_Filt(2, 1, 0x00200200);              // Accept 0x200200.
   CAN0.init_Filt(3, 1, 0x00200200);              // Accept 0x200200.
-  CAN0.init_Filt(4, 1, 0x00200200);              // Accept 0x200200.
+  CAN0.init_Filt(4, 1, 0x00300702);              // Accept 0x200200.
   CAN0.init_Filt(5, 1, 0x00201B05);              // Accept 0x201B05. this is dash connfig from ecu
   CAN0.setMode(MCP_NORMAL);
 
@@ -184,6 +186,8 @@ void loop() {
   float breathe_brightness = sin(millis()/400.0)*sin(millis()/400.0);
   bool TS_State = digitalRead(TS_BTN);
   bool RTD_State = digitalRead(RTD_BTN);
+  flash = false;
+  flash2 = false;
   // Serial.println("working");
 
   if(!TS_LastState && TS_State){
@@ -244,7 +248,6 @@ void loop() {
     uint8_t rxBuf[8];
     CAN0.readMsgBuf(&rxId, &rxLen, rxBuf);
     rxId &= 0x1FFFFFFF;
-    lastRecTime = millis();
 
     if (rxId == 0x00200200) { // Ping request from VDM
       // Respond to ping request by sending back received data
@@ -255,13 +258,14 @@ void loop() {
         digitalWrite(S6, HIGH);
     }
     else if(rxId == 0x00200300){  //ECU State
+      lastRecTime = millis();
       typedef int GR_ECU_State;
       GR_ECU_State ecu_state = rxBuf[0] & 0b00111111; //mask out reserved bits
       // GRCAN_ECU_STATUS_1_MSG* ecu_status = (GRCAN_ECU_STATUS_1_MSG*)rxBuf;
       // enum GR_ECU_State ecu_state = (GR_ECU_State)(ecu_status->ecu_state);
       CRGB breathe_red = CRGB::Red;
-      CRGB breathe_green = CRGB::Green;
-      CRGB breathe_blue = CRGB::Blue;
+      CRGB breathe_green = nvidia_green;
+      CRGB breathe_blue = CRGB(0, 50, 120);
       breathe_red = breathe_red.nscale8(breathe_brightness * 255);
       breathe_green = breathe_green.nscale8(breathe_brightness * 255);
       breathe_blue = breathe_blue.nscale8(breathe_brightness * 255);
@@ -269,30 +273,35 @@ void loop() {
     
       rainbow = false;
       reset_car_pls = false;
-      Serial.println(ecu_state);
+      bool all_latched = BMS_Latch_State && IMD_Latch_State && BSPD_Latch_State;
+      bool all_good = !BMS_State && !IMD_State && !BSPD_State;
+      precharge = false;
+      discharge = false;
+      // Serial.println(ecu_state);
       switch (ecu_state)
       {
         case GR_GLV_ON:
-          rainbow = true;
-          
-          if(!BMS_Latch_State && !IMD_Latch_State && !BSPD_Latch_State)
+          // rainbow = true;
+          setButtonLED(CRGB::Black, breathe_blue);
+          if(all_good && !all_latched)
             reset_car_pls = true;
           break;
 
         case GR_PRECHARGE_ENGAGED:
-          setButtonLED(CRGB::Black, CRGB::Red);
+          //setButtonLED(CRGB::Black, CRGB::Red);
+          precharge = true;
           break;
 
         case GR_PRECHARGE_COMPLETE:
-          setButtonLED(breathe_blue, CRGB::Green);
+          setButtonLED(breathe_blue, nvidia_green);
           break;
 
         case GR_DRIVE_ACTIVE:
-          setButtonLED(CRGB::Green, CRGB::Green);
+          setButtonLED(nvidia_green, nvidia_green);
           break;
 
         case GR_TS_DISCHARGE:
-          setButtonLED(CRGB::Red, breathe_red);
+          discharge = true;
           break;
 
         default:
@@ -313,26 +322,57 @@ void loop() {
 
       updateErrorLEDs();
     }
+    else if(rxId == 0x00300702){
+      unsigned int Bat_Voltage = rxBuf[0] + (((int)rxBuf[1])<<8);
+      unsigned int TS_Voltage = rxBuf[2] + (((int)rxBuf[3])<<8);
+      float brightness = min((float)TS_Voltage/(float)Bat_Voltage, 1.0);
+
+      if(precharge){        
+        CRGB greenish = nvidia_green;
+        greenish = greenish.nscale8(brightness *brightness *brightness*brightness * 255);
+        setButtonLED(CRGB::Black, greenish);
+      }
+      else if(discharge){
+        float brightness = constrain(((float)TS_Voltage - 6000.0f)/(float)Bat_Voltage, 0.0f, 1.0f);
+        CRGB orangeish = CRGB::Orange;
+        orangeish = orangeish.nscale8(brightness *brightness *brightness * 255);
+        setButtonLED(orangeish, orangeish);
+      }
+    }
     else {
       Serial.println(F("CAN filter isn't working"));
     }
   }
 
-  if(millis() - lastRecTime > 50) // stale date
+  if(millis() - lastRecTime > 100) // stale date
     flash = true;
-  else
-    flash = false;
 
+  if((BMS_State || IMD_State ||BSPD_State))
+    flash2 = true;
 
   
   if(flash){
     CRGB flasher = CRGB::Red;
-    float flash_brightness = sin(millis()/50.0)*sin(millis()/50.0)*sin(millis()/50.0)*sin(millis()/50.0);
+    float t = millis() / 50.0;
+    float blink = pow(sin(t), 4);
+    float gate = sin(t / 3.0) > 0 ? 1.0 : 0.0;
+    float flash_brightness = blink * gate;
     flasher = flasher.nscale8(flash_brightness * 255);
     
     btn_leds[0] = flasher;
     btn_leds[1] = flasher;
-    FastLED.show();
+
+    error_leds[0] = CRGB::Black;
+    error_leds[1] = CRGB::Black;
+    error_leds[2] = CRGB::Black;
+  }
+  else if(flash2){
+    CRGB flasher = CRGB::Red;
+    float flash_brightness = pow(sin(millis()/50.0), 4);
+    flasher = flasher.nscale8(flash_brightness * 255);
+    
+    btn_leds[0] = flasher;
+    btn_leds[1] = flasher;
   }
   else if(reset_car_pls){
     CRGB flasher = CRGB::Purple;
@@ -341,7 +381,6 @@ void loop() {
     
     btn_leds[0] = flasher;
     btn_leds[1] = flasher;
-    FastLED.show();
   }
   else if(rainbow){
     btn_leds[0] = CHSV((millis() / 16) + randNumber1, 255, 255);
@@ -349,6 +388,6 @@ void loop() {
 
     float brightness = sin(millis()/400.0)*sin(millis()/400.0);
     btn_leds[1].nscale8(brightness * 255);
-    FastLED.show();
   }
+  FastLED.show();
 }

@@ -8,9 +8,9 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/include",
-                "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/src",
-                "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/.pio/libdeps/sparkfun_promicro16/FastLED/src",
+                "C:/Users/ryand/OneDrive/Documents/PlatformIO/GR24_Dash_Panel/GR26_DASH/include",
+                "C:/Users/ryand/OneDrive/Documents/PlatformIO/GR24_Dash_Panel/GR26_DASH/src",
+                "C:/Users/ryand/OneDrive/Documents/PlatformIO/GR24_Dash_Panel/GR26_DASH/.pio/libdeps/sparkfun_promicro16/FastLED/src",
                 "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                 "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
                 "C:/Users/ryand/.platformio/packages/framework-arduino-avr/cores/arduino",
@@ -23,9 +23,9 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/include",
-                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/src",
-                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/Projects/GR26_DASH/.pio/libdeps/sparkfun_promicro16/FastLED/src",
+                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/GR24_Dash_Panel/GR26_DASH/include",
+                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/GR24_Dash_Panel/GR26_DASH/src",
+                    "C:/Users/ryand/OneDrive/Documents/PlatformIO/GR24_Dash_Panel/GR26_DASH/.pio/libdeps/sparkfun_promicro16/FastLED/src",
                     "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                     "C:/Users/ryand/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
                     "C:/Users/ryand/.platformio/packages/framework-arduino-avr/cores/arduino",
