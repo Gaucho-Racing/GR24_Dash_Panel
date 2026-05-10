@@ -87,9 +87,9 @@ void setButtonLED(CRGB color1, CRGB color2) {
 }
 
 void updateErrorLEDs() {
-  error_leds[0] = BSPD_State ? CRGB::Red : CRGB::Black;
-  error_leds[1] = IMD_State ? CRGB::Red : CRGB::Black;
-  error_leds[2] = BMS_State ? CRGB::Red : CRGB::Black;
+  error_leds[0] = BSPD_Latch_State ? CRGB::Black : CRGB::Red;
+  error_leds[1] = IMD_Latch_State ? CRGB::Black : CRGB::Red;
+  error_leds[2] = BMS_Latch_State ? CRGB::Black : CRGB::Red;
 }
 
 void startupTest() {
